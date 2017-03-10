@@ -21,7 +21,7 @@ void producer(BufferPtr q) {
   for (int i = 0; i < 1000000; ++i) {
     // wait if the queue is full
     q->push(i);
-    int push_success;
+    bool push_success;
     // no wait if the queue if full
     push_success = q->try_push(i);
     // wait for 1 sec if the queue is full
@@ -35,7 +35,7 @@ int consumer(BufferPtr q) {
   for (int i = 0; i < 1000000; ++i) {
     // wait if the queue is empty
     int item = q->pop();
-    int pop_success;
+    bool pop_success;
     // no wait if the queue is empty
     pop_success = q->try_pop(item);
     // wait for 1 sec if the queue is empty
@@ -46,7 +46,9 @@ int consumer(BufferPtr q) {
 }
 
 int main() {
-  bounded_buffer queue;
+  // queue capacity 1000
+  bounded_buffer queue(1000);
+  // create 2 producer & 2 consumer
   std::thread p0(producer, q);
   std::thread p1(producer, q);
   std::thread c0(consumer, q);
