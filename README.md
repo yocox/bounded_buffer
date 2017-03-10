@@ -8,8 +8,9 @@ Header only generic thread-safe C++ bounded buffer
 - Generic
 - Thread safe
 
-# Dependency
+# Prerequest
 
+- C++11 compiler
 - [boost/circular_buffer](http://boost.org)
 
 # Sample Usage
