@@ -7,8 +7,6 @@
 #include <boost/circular_buffer.hpp>
 #include <boost/optional.hpp>
 
-namespace Orbit {
-
 template <typename T>
 class BoundedBuffer {
  public:
@@ -98,7 +96,5 @@ class BoundedBuffer {
   // queue
   base_container_type buffer_;
 } ;
-
-} // namespace Orbit
 
 #endif // __BOUNDED_BUFFER_H__

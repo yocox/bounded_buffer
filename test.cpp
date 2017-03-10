@@ -6,10 +6,10 @@
 #include <boost/optional.hpp>
 
 #include "gtest/gtest.h"
-#include "bounded_buffer.h"
+#include "bounded_buffer.hpp"
 
 std::atomic_int ai(2);
-using BufferPtr = std::shared_ptr<Orbit::BoundedBuffer<int>>;
+using BufferPtr = std::shared_ptr<BoundedBuffer<int>>;
 using ThreadPtr = std::shared_ptr<std::thread>;
 
 void sleep(int ms) {
@@ -36,7 +36,7 @@ void push5(BufferPtr q) {
 }
 
 TEST(BoundedBufferTest, HappyPath) {
-  auto q = std::make_shared<Orbit::BoundedBuffer<int>>(1000);
+  auto q = std::make_shared<BoundedBuffer<int>>(1000);
   ThreadPtr p1 = std::make_shared<std::thread>(producer, q);
   ThreadPtr p2 = std::make_shared<std::thread>(producer, q);
   ThreadPtr c1 = std::make_shared<std::thread>(consumer, q);
@@ -50,7 +50,7 @@ TEST(BoundedBufferTest, HappyPath) {
 
 TEST(BoundedBufferTest, PopFromEmptyQueueAndWait) {
   auto start = std::chrono::system_clock::now();
-  auto q = std::make_shared<Orbit::BoundedBuffer<int>>(1000);
+  auto q = std::make_shared<BoundedBuffer<int>>(1000);
   int item = 0;
   EXPECT_FALSE(q->try_pop_for(std::chrono::seconds(1), item));;
   EXPECT_FALSE(q->try_pop_until(std::chrono::system_clock::now() + std::chrono::seconds(1), item));;
@@ -62,7 +62,7 @@ TEST(BoundedBufferTest, PopFromEmptyQueueAndWait) {
 
 TEST(BoundedBufferTest, PopFromQueueAndWait) {
   auto start = std::chrono::system_clock::now();
-  auto q = std::make_shared<Orbit::BoundedBuffer<int>>(1000);
+  auto q = std::make_shared<BoundedBuffer<int>>(1000);
   q->push(7);
   q->push(8);
   int item = 0;
@@ -77,7 +77,7 @@ TEST(BoundedBufferTest, PopFromQueueAndWait) {
 
 TEST(BoundedBufferTest, FiveEntry) {
   auto start = std::chrono::system_clock::now();
-  auto q = std::make_shared<Orbit::BoundedBuffer<int>>(1000);
+  auto q = std::make_shared<BoundedBuffer<int>>(1000);
   ThreadPtr g = std::make_shared<std::thread>(push5, q);
   int item;
   q->try_pop_until(std::chrono::system_clock::now() + std::chrono::seconds(5), item);

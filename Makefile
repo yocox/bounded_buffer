@@ -1,7 +1,7 @@
 test: test.out
 	./test.out
 
-test.out: ./test.cpp ./bounded_buffer.h
+test.out: ./test.cpp ./bounded_buffer.hpp
 	g++ \
 		-g -std=c++11 \
 		-o test.out \
@@ -11,5 +11,7 @@ test.out: ./test.cpp ./bounded_buffer.h
 		../googletest/googlemock/gtest/libgtest_main.a \
 		-pthread
 
+clean:
+	rm -rf ./test.out
 
 
