@@ -32,6 +32,41 @@ class BoundedBuffer {
     cv_not_empty_.notify_one();
   }
 
+  void try_push(T v) {
+    {
+      std::unique_lock<std::mutex> lock(mutex_);
+      if (buffer_.full()) {
+        return false;
+      }
+      buffer_.push_front(v);
+    }
+    cv_not_empty_.notify_one();
+  }
+
+  template <typename Duration>
+  bool try_push_for(T v, Duration&& d, T& item) {
+    {
+      std::unique_lock<std::mutex> lock(mutex_);
+      if(!cv_not_full_.wait_for(lock, d, [this]() { return this->buffer_.size() < buffer_.capacity(); })) {
+        return false;
+      }
+      buffer_.push_front(v);
+    }
+    cv_not_empty_.notify_one();
+  }
+
+  template <typename Timepoint>
+  bool try_push_untul(T v, Timepoint&& tp, T& item) {
+    {
+      std::unique_lock<std::mutex> lock(mutex_);
+      if(!cv_not_full_.wait_until(lock, tp, [this]() { return this->buffer_.size() < buffer_.capacity(); })) {
+        return false;
+      }
+      buffer_.push_front(v);
+    }
+    cv_not_empty_.notify_one();
+  }
+
   T pop() {
     std::unique_lock<std::mutex> lock(mutex_);
     cv_not_empty_.wait(lock, [this]() { return this->buffer_.size() > 0; });
@@ -82,9 +117,18 @@ class BoundedBuffer {
      return buffer_.empty();
   }
 
-  size_type size() { return buffer_.size(); }
-  size_type capacity() { return buffer_.capacity(); }
-  base_container_type get_queue() { return buffer_; }
+  size_type size() {
+    return buffer_.size();
+  }
+
+  size_type capacity() {
+    return buffer_.capacity();
+  }
+
+  base_container_type get_queue() {
+    std::unique_lock<std::mutex> lock(mutex_);
+    return buffer_;
+  }
 
  private:
   // for locking
