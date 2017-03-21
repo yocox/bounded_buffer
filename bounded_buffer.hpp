@@ -5,7 +5,6 @@
 #include <mutex>
 #include <condition_variable>
 #include <boost/circular_buffer.hpp>
-#include <boost/optional.hpp>
 
 template <typename T>
 class BoundedBuffer {

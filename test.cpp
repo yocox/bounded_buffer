@@ -3,7 +3,6 @@
 #include <memory>
 #include <future>
 #include <atomic>
-#include <boost/optional.hpp>
 
 #include "gtest/gtest.h"
 #include "bounded_buffer.hpp"
