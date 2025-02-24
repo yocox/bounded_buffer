@@ -56,7 +56,7 @@ class BoundedBuffer {
   }
 
   template <typename Timepoint>
-  bool try_push_untul(T v, Timepoint&& tp, T& item) {
+  bool try_push_until(T v, Timepoint&& tp, T& item) {
     {
       std::unique_lock<std::mutex> lock(mutex_);
       if(!cv_not_full_.wait_until(lock, tp, [this]() { return this->buffer_.size() < buffer_.capacity(); })) {
